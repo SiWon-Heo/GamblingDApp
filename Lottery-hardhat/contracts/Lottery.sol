@@ -41,22 +41,34 @@ contract Lottery {
     }
 
     function getRandomNumberV3() public view returns (uint256) {
-        return getRandomNumberV2() % players.length;
+        return
+            uint256(
+                keccak256(
+                    abi.encodePacked(
+                        blockhash(block.number - 1),
+                        block.timestamp
+                    )
+                )
+            );
     }
 
     function pickWinner() public onlyOnwer {
-        uint256 index = getRandomNumber() % players.length;
+        // turn on depending on the test version
+        // uint256 index = getRandomNumber() % players.length;
         // uint256 index = getRandomNumberV2() % players.length;
-        // uint256 index = getRandomNumberV3() % players.length;
+        uint256 index = getRandomNumberV3() % players.length;
 
         lotteryHistory[lotteryId] = players[index];
         lotteryId++;
 
-        (bool success, ) = players[index].call{value: address(this).balance}(
-            ""
-        );
+        address payable winner = players[index];
+        // for version 2
+        // players = new address payable[](0);
+
+        (bool success, ) = winner.call{value: address(this).balance}("");
         require(success, "Failed to send ETH");
 
+        // for version 1,3
         players = new address payable[](0);
     }
 
