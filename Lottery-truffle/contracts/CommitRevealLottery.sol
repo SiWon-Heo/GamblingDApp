@@ -18,6 +18,10 @@ contract CommitRevealLottery {
         revealCloses = commitCloses + DURATION;
     }
 
+    function getBalance() public view returns (uint256) {
+        return address(this).balance;
+    }
+
     function enter(bytes32 commitment) public payable {
         require(
             msg.value >= .01 ether,
@@ -26,6 +30,13 @@ contract CommitRevealLottery {
         require(block.number < commitCloses, "commit duration is over");
 
         commitments[msg.sender] = commitment;
+    }
+
+    function isAlreadyRevealed() public view returns (bool) {
+        for (uint256 i; i < players.length; i++) {
+            if (msg.sender == players[i]) return true;
+        }
+        return false;
     }
 
     function createCommitment(uint256 secret) public view returns (bytes32) {
