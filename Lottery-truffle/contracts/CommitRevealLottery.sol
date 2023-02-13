@@ -52,6 +52,7 @@ contract CommitRevealLottery {
             block.number < revealCloses,
             "reveal duration is already closed"
         );
+        require(!isAlreadyRevealed(), "You already revealed");
 
         bytes32 commit = createCommitment(secret);
         require(commit == commitments[msg.sender], "commit does not match");
