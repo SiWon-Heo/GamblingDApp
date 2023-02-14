@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.15;
+import "hardhat/console.sol";
 
 contract CommitRevealLottery {
     uint256 public commitCloses;
@@ -18,6 +19,10 @@ contract CommitRevealLottery {
         revealCloses = commitCloses + DURATION;
     }
 
+    function getBalance() public view returns (uint256) {
+        return address(this).balance;
+    }
+
     function enter(bytes32 commitment) public payable {
         require(
             msg.value >= .01 ether,
@@ -32,6 +37,13 @@ contract CommitRevealLottery {
         return keccak256(abi.encodePacked(msg.sender, secret));
     }
 
+    function isAlreadyRevealed() public view returns (bool) {
+        for (uint256 i; i < players.length; i++) {
+            if (msg.sender == players[i]) return true;
+        }
+        return false;
+    }
+
     function reveal(uint256 secret) public {
         require(
             block.number >= commitCloses,
@@ -41,6 +53,7 @@ contract CommitRevealLottery {
             block.number < revealCloses,
             "reveal duration is already closed"
         );
+        require(!isAlreadyRevealed(), "You already revealed");
 
         bytes32 commit = createCommitment(secret);
         require(commit == commitments[msg.sender], "commit does not match");
