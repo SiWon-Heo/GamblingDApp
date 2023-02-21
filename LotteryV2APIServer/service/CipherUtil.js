@@ -1,6 +1,6 @@
 const crypto = require("crypto");
 const IV_LENGTH = 16;
-const path = requrie("path");
+const path = require("path");
 const envType = process.env.NODE_ENV || "development";
 require("dotenv").config({
     path: path.join(__dirname, `../config/${envType}.env`),
