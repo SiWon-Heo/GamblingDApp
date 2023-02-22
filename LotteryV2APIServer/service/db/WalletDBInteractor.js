@@ -40,6 +40,37 @@ class WalletDBInteractor {
             };
         }
     }
+
+    static async getWallet(accountName) {
+        const funcName = "getWallet";
+        try {
+            const wallet = await Wallet.findOne({
+                where: {
+                    account_name: accountName,
+                },
+            });
+            if (!_.isEmpty(wallet)) {
+                return {
+                    status: errorCodes.success,
+                    result: wallet,
+                    err: null,
+                };
+            }
+
+            return {
+                status: errorCodes.client_issue,
+                result: null,
+                err: null,
+            };
+        } catch (err) {
+            console.error(`[${funcName}] err:`, err);
+            return {
+                status: errorCodes.server_issue,
+                result: null,
+                err: err,
+            };
+        }
+    }
 }
 
 module.exports = WalletDBInteractor;

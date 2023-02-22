@@ -6,4 +6,9 @@ const database = require("./db-config.json")[envType];
 
 module.exports = {
     database: database,
+    // for lotteryv2interactor
+    blockchain: {
+        development: "https://localhost:8545",
+        goerli: "https://ethereum-goerli-rpc.allthatnode.com",
+    },
 };
